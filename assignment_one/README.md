@@ -37,3 +37,18 @@ Several steps were taken to gain an understanding of the stocks dataset.
  `df_sub['date'].dt.isocalendar().week`: `dt` is the accessor object for datetime properties of a series. 
  `isocalendar()` is a pandas function that returns a tuple containing the year, week number, and weekday of a date. I was 
  interested in the week which was accessed by `.week`. The mean of these groups was computed using `mean()`.
+ 
+ ## Assignment Two
+ I continued with the same data set as assignment one. The primary objective of this assigment was to create a date difference in months from the most recent date in the dataset.
+ 
+ ### Steps Taken
+ * I had already converted the date field to datetime, otherwise this would have been the first step.
+ * I found the max date using `max_date = df.date.max()`
+ * Create a new column `'days_from_max_date'` using: `max_date - df.date`
+   * Each record was populated with a positive number of days from the max date.
+ * Convert days to months
+   * A new column `months from max_date` defined as `'days_from_max_date' - np.timedelta(1,'M')`
+   * `np.timedelta()` takes a number representing the number of units (here 1) and a date/time unit (here 'M' for month), and returns a datetime object.
+ * Finally, `df.to_csv()` was used to save the reulting modified dataframe to a text file.
+ 
+ 
