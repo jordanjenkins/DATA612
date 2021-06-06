@@ -51,4 +51,36 @@ Several steps were taken to gain an understanding of the stocks dataset.
    * `np.timedelta()` takes a number representing the number of units (here 1) and a date/time unit (here 'M' for month), and returns a datetime object.
  * Finally, `df.to_csv()` was used to save the reulting modified dataframe to a text file.
  
- 
+ ### Assignment Three
+ #### Additional Feature Engineering
+Some columns are not useful for analysis as they currently stand. I converted the `52 week range` into two columns representing the min and max 52 week value, the daily price range `price range` into daily min and max values, and the `price_change` into a percent change and absolute change value.
+
+The general method I used was `df.column.str.split(delimiter, n = 1 ,expand = True)`.
+##### Example Split and Create New Columns
+```
+new = df['52 week range'].str.split(' - ', n=1, expand=True)
+df['min_52'] = new[0]
+df['max_52'] = new[1]
+df.drop(columns='52 week range', inplace=True)  
+```
+The price change needed additional processing and was done as follows:
+```
+new = df['price_change'].str.split(' ', n=1, expand=True)
+df['price_chng'] = new[0]
+df['price_chng_pct'] = new[1].str[1:-2]
+df.drop(columns='price_change', inplace=True)
+```
+`new[1].str[1:2]` converted a value such as `(+13.45%)` to `+13.45`.
+
+Next I converted the most of the Series with type object to type numeric using:
+```
+df[cols_to_numeric] = df[cols_to_numeric].apply(pd.to_numeric, errors='coerce', axis=1)
+```
+
+Where `cols_to_numeric` was a list of colums that I wanted to change to numeric. This line applies `pd.to_numeric` to all of the columns listed, coercing any non-numbers to Nan.
+
+#### Subset number of companies
+I subsetted the data to include only four companies, GOOG, MSFT, AAPL, and AMZN, these are large tech companies and I waould like to compare them.
+
+#### Plotting
+I looked at the distribution of trade volume two ways with a histogram and box plots. I also looked at the distribution of two variables `volume` and `price_chng_pct` using a hex desity plot with histograms. Finally, I used a scatter plot to compare `price_chng_pct` as a function of `volume` for each of the four companies.
