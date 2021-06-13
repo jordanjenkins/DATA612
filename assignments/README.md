@@ -84,3 +84,15 @@ I subsetted the data to include only four companies, GOOG, MSFT, AAPL, and AMZN,
 
 #### Plotting
 I looked at the distribution of trade volume two ways with a histogram and box plots. I also looked at the distribution of two variables `volume` and `price_chng_pct` using a hex desity plot with histograms. Finally, I used a scatter plot to compare `price_chng_pct` as a function of `volume` for each of the four companies.
+
+### Assignment Four
+I created a csv with current data using the code at https://github.com/tonysla/Easy-And-Fun-With-BeautifulSoup which is what was used to generate the original stock data set.
+
+Assignment four occurs at the beginning of the notebook. I loaded the new data using `read_csv()`, modified a couple column names so they match the names from the existing data, and appended the dataframe to the existing data using `df.append(df_new, ignore_index=True)`.
+
+#### Addressing missingness
+`df.isnull().sum(axis = 0)` provided me with a snapshot of missing data by column. Most of the data in `earnings date` was missing, I opted to drop the column. Altenratively, I could have transformed this into a boolean `is_earnings_date`.
+
+Since a simple fillna would not work because there are inherent groupings to the data. I created a helper function that gorups the data (here by `company name`), sets the index by date and tries three different fill methods.
+
+After applying this function to the dataset, there were still a decent number of records with missing data. These were only for three stocks and all of the data for each record was missing. I dropped these records from the dataset. After this processing, I had a dataset with no missingness.
