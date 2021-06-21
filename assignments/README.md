@@ -96,3 +96,39 @@ Assignment four occurs at the beginning of the notebook. I loaded the new data u
 Since a simple fillna would not work because there are inherent groupings to the data. I created a helper function that gorups the data (here by `company name`), sets the index by date and tries three different fill methods.
 
 After applying this function to the dataset, there were still a decent number of records with missing data. These were only for three stocks and all of the data for each record was missing. I dropped these records from the dataset. After this processing, I had a dataset with no missingness.
+
+## Assignment Five
+
+### Change Column from a Non-Categorical Type to a Categorical Type
+It may be useful to look at volume as it relates to the day's average volume. If the volume is much higher than average, there could be a lot of volatility in the price. I will split the column into the following:
+* Higher than Average (greater than the 75th percentile for the individual stock)
+* Average (between the 25th and 75th percentile)
+* Below Average (below the 25th percentile)
+
+I created a new column `vol_cat` based on `volume` that gave a quartile rank of the volume. I intended to use `pandas.qcut` to do this, but I had issues with duplicate edge values for a few companies. If I would have considered volume market-wide I would have likely been able to use `qcut` without issue. To work around this, I utilized a custom function that defines percentile edges and applies a rank to the values in a series.
+
+```
+def pct_rank_qcut(series, n):
+    edges = pd.Series([float(i) / n for i in range(n + 1)])
+    f = lambda x: (edges >= x).argmax()
+    return series.rank(pct=1).apply(f)
+```
+
+The actual ranking was done with the following:
+```
+# Group the data by company name and apply the custom qcut function
+df['vol_cat'] = df.groupby('company_name')['volume'].transform(pct_rank_qcut,4)
+```
+
+I then combined the two middle quartiles and defined `vol_cat` as type categorical.
+```
+df['vol_cat'] = np.where(
+     df['vol_cat'].between(0, 1), 
+    'Below_Avg', 
+     np.where(
+        df['vol_cat'].between(1, 3), 'Avg', 'Above_Avg'
+     )
+)
+```
+### Column to String
+I created a column of weekday from the date and changed the type to string. `df['day_of_week'] = df.date.dt.dayofweek.astype(str)`
