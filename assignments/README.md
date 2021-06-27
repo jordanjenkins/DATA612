@@ -132,3 +132,33 @@ df['vol_cat'] = np.where(
 ```
 ### Column to String
 I created a column of weekday from the date and changed the type to string. `df['day_of_week'] = df.date.dt.dayofweek.astype(str)`
+
+## Assignment Six
+### Regex Exercise
+The goal was to convert `market cap` from a string to a float in the same unit. `market cap` looks like "26B" where there is a number ending with a letter in [B, M, T].
+
+#### Regex Pattern Number
+The pattern I used to extract the number is as follows: `r'(\d+\.?\d*)'`.
+* \d+ digits before optional decimal
+* .? optional decimal(optional due to the ? quantifier)
+* \d* optional digits after decimal
+
+#### Regex Pattern Number
+The pattern used to extract the unit is as follows: `r'([a-zA-Z]+)'`. It just returns an letter matched.
+
+#### Create New Column
+I used to following function to put each market cap value into the same unit:
+```
+def unit_conv(row):
+    val = row['mk_val']
+    unit = row['mk_multiplier']
+    
+    if unit == 'T':
+        return val * 1000 # if unit is Trillion, multiply by 1000 to get billions
+    elif unit == 'M':
+        return val / 1000 # if unit is Million, divide by 1000 to get billions
+    else:
+        return val
+```
+
+This value was placed in `mk_cap_cleaned_billions` using `df['mk_cap_cleaned_billions'] = df.apply(unit_conv, axis=1)`
