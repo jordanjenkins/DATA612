@@ -162,3 +162,28 @@ def unit_conv(row):
 ```
 
 This value was placed in `mk_cap_cleaned_billions` using `df['mk_cap_cleaned_billions'] = df.apply(unit_conv, axis=1)`
+
+## Assignment 7
+I added the sample code from the assignment documment, resulting in a DataFrame `example_df` of the `mpg` dataset and a function `summarize_data`.
+
+### Additional Prep
+I split the stock ticker symbol from `company_name` using `df.company_name.str.split(' - ', expande = True)` and created a column, `symbol` using the first column in the result.
+
+### Modifiying Summarixe Function
+I modifiied the `summarize_data` function, the result is a new function `my_summarize_data` which still use `g` as a function parameter.
+
+```
+def my_summarize_data(g):
+  return(
+    pd.Series({
+      "avg_price_chng": g.price_chng.mean(),
+      "min_price_chng": g.price_chng.min(),
+      "max_price_chng": g.price_chng.max(),
+      "median_price_chng": g.price_chng.median(),
+      "sample_count": len(g),
+      "mix": g.symbol.count()/df.symbol.count(),
+    })
+  )
+```
+
+This is still only useful to summarize data in one column, here `price_chng`. I changed the mix to use `count` instead of `sum`, since this is a more broadly reliable way to get a row count, and ultimately proportion. Future work would be to make this applicable to any measure provided, which may be able to be done with the creation of an additional function parameter.
